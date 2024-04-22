@@ -15,11 +15,10 @@ fn find_matches(content: &str, pattern: &str) {
     for line in content.lines() {
         if line.contains(pattern) {
             pb.println(format!("[+] finished #{}", line));
-            println!("{}", line);
+            pb.inc(1);
         }
-        pb.inc(1);
-        pb.finish_with_message("done");
     }
+    pb.finish_with_message("done");
 }
 
 fn main() -> Result<()> {
