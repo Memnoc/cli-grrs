@@ -15,10 +15,16 @@ fn main() -> Result<()> {
 
     let content = std::fs::read_to_string(&args.path)
         .with_context(|| format!("could not read file `{}`", args.path.display()))?;
+
+    // NOTE: progress bar
+    let pb = indicatif::ProgressBar::new(content.lines().count() as u64);
+
     for line in content.lines() {
         if line.contains(&args.pattern) {
+            pb.println(format!("[+] finished #{}", line));
             println!("{}", line);
         }
     }
+    pb.finish_with_message("done");
     Ok(())
 }
