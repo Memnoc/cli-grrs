@@ -33,7 +33,6 @@ fn find_content_in_file() -> Result<(), Box<dyn std::error::Error>> {
 fn find_empty_file() -> Result<(), Box<dyn std::error::Error>> {
     let temp_file = assert_fs::NamedTempFile::new("empty_sample.txt")?;
     temp_file.write_str("")?;
-    println!("Path: {:?}", temp_file.path());
 
     let mut cmd = Command::cargo_bin("grrs")?;
     cmd.arg("test").arg(temp_file.path());
