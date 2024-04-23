@@ -10,16 +10,21 @@ struct Cli {
     path: std::path::PathBuf,
 }
 
-fn find_matches(content: &str, pattern: &str, mut writer: impl std::io::Write) {
+fn find_matches(
+    content: &str,
+    pattern: &str,
+    mut writer: impl std::io::Write,
+) -> Result<(), std::io::Error> {
     let pb = indicatif::ProgressBar::new(content.lines().count() as u64);
     for line in content.lines() {
         if line.contains(pattern) {
-            writeln!(writer, "{}", line).unwrap();
+            writeln!(writer, "{}", line)?;
             pb.println(format!("[+] finished #{}", line));
             pb.inc(1);
         }
     }
     pb.finish_with_message("done");
+    Ok(())
 }
 
 fn main() -> Result<()> {
@@ -27,7 +32,7 @@ fn main() -> Result<()> {
     let content = std::fs::read_to_string(&args.path)
         .with_context(|| format!("could not read file `{}`", args.path.display()))?;
 
-    find_matches(&content, &args.pattern, &mut std::io::stdout());
+    let _ = find_matches(&content, &args.pattern, &mut std::io::stdout());
 
     Ok(())
 }
@@ -35,6 +40,6 @@ fn main() -> Result<()> {
 #[test]
 fn find_a_match() {
     let mut result = Vec::new();
-    find_matches("lorem ipsum\ndolor sit amet", "lorem", &mut result);
-    assert_eq!(result, b"lorem ipsum\n");
+    let _ = find_matches("lorem ipsum\ndolor sit amet", "lorem", &mut result);
+    assert_eq!(result, b"lorem ipsum\n"); // byte string literal &[u8]
 }
